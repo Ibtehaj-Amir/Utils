@@ -226,9 +226,6 @@ def run(
                         except:
                             _dict[int(frame_idx)] = [[int(id), class_id, confidence, center, [bbox[0],bbox[1],bbox[2],bbox[3]]]]
 
-                    with open(txt_path + '.json','w') as fp:
-                        json.dump(_dict,fp, default=str)
-
                         if save_txt:
                             # to MOT format
                             bbox_left = output[0]
@@ -293,6 +290,8 @@ def run(
 
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
+    with open(txt_path + '.json','w') as fp:
+        json.dump(_dict,fp, default=str)
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms {tracking_method} update per image at shape {(1, 3, *imgsz)}' % t)
     if save_txt or save_vid:
         s = f"\n{len(list(save_dir.glob('tracks/*.txt')))} tracks saved to {save_dir / 'tracks'}" if save_txt else ''
