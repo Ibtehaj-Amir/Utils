@@ -74,7 +74,6 @@ def run(
         vid_stride=1,  # video frame-rate stride
         retina_masks=False,
 ):
-    
     _dict = {}
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -219,15 +218,14 @@ def run(
                         id = output[4]
                         cls = output[5]
                         conf = output[6]
-
-                        c = int(cls)
+                        class_id = int(cls)
                         center =int(((bbox[0])+(bbox[2]))/2),int(((bbox[1])+(bbox[3]))/2)
                         confidence = round(conf.item(),2)
                         try:
-                            _dict[int(frame_idx)].append([int(id), c, confidence, center, [bbox[0],bbox[1],bbox[2],bbox[3]]])
+                            _dict[int(frame_idx)].append([int(id), class_id, confidence, center, [bbox[0],bbox[1],bbox[2],bbox[3]]])
                         except:
-                            _dict[int(frame_idx)] = [[int(id), c, confidence, center, [bbox[0],bbox[1],bbox[2],bbox[3]]]]
-                            
+                            _dict[int(frame_idx)] = [[int(id), class_id, confidence, center, [bbox[0],bbox[1],bbox[2],bbox[3]]]]
+
                     with open(txt_path + '.json','w') as fp:
                         json.dump(_dict,fp, default=str)
 
