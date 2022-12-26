@@ -75,6 +75,7 @@ def run(
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
 
+    _dict = {}
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (VID_FORMATS)
@@ -119,9 +120,6 @@ def run(
     # initialize StrongSORT
     cfg = get_config()
     cfg.merge_from_file(opt.config_strongsort)
-
-    #dict for json
-    _dict = {}
 
     # Create as many strong sort instances as there are video sources
     strongsort_list = []
@@ -226,17 +224,13 @@ def run(
                         bboxes = output[0:4]
                         id = output[4]
                         cls = output[5]
-                        c = int(cls)
+                        class_id = int(cls)
                         center =int(((bboxes[0])+(bboxes[2]))/2),int(((bboxes[1])+(bboxes[3]))/2)
                         confidence = round(conf.item(),2)
-
                         try:
-                            _dict[int(frame_idx)].append([int(id), c, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]])
+                            _dict[int(frame_idx)].append([int(id), class_id, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]])
                         except:
-                            _dict[int(frame_idx)] = [[int(id), c, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]]]
-                            
-                    with open(txt_path + '.json','w') as fp:
-                        json.dump(_dict,fp, default=str)
+                            _dict[int(frame_idx)] = [[int(id), class_id, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]]]
 
                         if save_txt:
                             # to MOT format
@@ -290,6 +284,8 @@ def run(
 
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
+    with open(txt_path + '.json','w') as fp:
+      json.dump(_dict,fp, default=str)
     print(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS, %.1fms strong sort update per image at shape {(1, 3, imgsz, imgsz)}' % t)
     if save_txt or save_vid:
         s = f"\n{len(list(save_dir.glob('tracks/*.txt')))} tracks saved to {save_dir / 'tracks'}" if save_txt else ''
@@ -301,7 +297,7 @@ def run(
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--yolo-weights', nargs='+', type=str, default=WEIGHTS / 'yolov7.pt', help='model.pt path(s)')
-    parser.add_argument('--strong-sort-weights', type=str, default=WEIGHTS / 'osnet_x0_75_msmt17.pt')
+    parser.add_argument('--strong-sort-weights', type=str, default=WEIGHTS / 'osnet_x0_25_msmt17.pt')
     parser.add_argument('--config-strongsort', type=str, default='strong_sort/configs/strong_sort.yaml')
     parser.add_argument('--source', type=str, default='0', help='file/dir/URL/glob, 0 for webcam')  
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
