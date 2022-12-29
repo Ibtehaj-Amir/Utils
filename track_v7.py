@@ -228,9 +228,9 @@ def run(
                         center =int(((bboxes[0])+(bboxes[2]))/2),int(((bboxes[1])+(bboxes[3]))/2)
                         confidence = round(conf.item(),2)
                         try:
-                            _dict[int(frame_idx)].append([int(id), class_id, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]])
+                            _dict[int(frame_idx)].append([int(id), class_id, confidence, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]])
                         except:
-                            _dict[int(frame_idx)] = [[int(id), class_id, confidence, center, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]]]
+                            _dict[int(frame_idx)] = [[int(id), class_id, confidence, [bboxes[0],bboxes[1],bboxes[2],bboxes[3]]]]
 
                         if save_txt:
                             # to MOT format
