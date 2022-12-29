@@ -99,9 +99,9 @@ def run(poseweights="yolov7-w6-pose.pt",source="football1.mp4",device='cpu',view
                             kpts = pose[det_index, 6:]
                             label = None if opt.hide_labels else (names[c] if opt.hide_conf else f'{names[c]} {conf:.2f}')
                             try:
-                                _dict[int(frame_count)].append([c, confidence, center, [[int(xyxy[0]),int(xyxy[1]),int(xyxy[2]),int(xyxy[3])]],{}])
+                                _dict[int(frame_count)].append([c, confidence, [[int(xyxy[0]),int(xyxy[1]),int(xyxy[2]),int(xyxy[3])]],{}])
                             except: 
-                                _dict[int(frame_count)] = [[c, confidence, center, [int(xyxy[0]),int(xyxy[1]),int(xyxy[2]),int(xyxy[3])],{}]]
+                                _dict[int(frame_count)] = [[c, confidence, [int(xyxy[0]),int(xyxy[1]),int(xyxy[2]),int(xyxy[3])],{}]]
                             steps = 3
                             num_kpts = len(kpts) // steps
                             for kid in range(num_kpts):
